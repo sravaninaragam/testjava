@@ -1,33 +1,15 @@
 version: 0.2
 
+env:
+  variables:
+    SONAR_LOGIN: "7a16f9f11e724d5672fd1466d5848f45d3353f3d"
+    SONAR_HOST: "http://13.235.76.152:9000"
+    #You should use parameter-store here instead
+
 phases:
-  install:
-    runtime-versions:
-      java: corretto11
-    #commands:
-        #- yum update -y
-        #- yum install -y maven
-  pre_build:
-    commands:
-      - yum update -y
-      - yum install -y maven
-      - echo Nothing to do in the pre_build phase...
-      - wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
-      - echo "Current path is >>>"
-      - sh $pwd
-      - unzip ./sonar-scanner-cli-4.7.0.2747-linux.zip
-      - ls $pwd
-      - export PATH=$PATH:./sonar-scanner-4.7.0.2747-linux/bin/
   build:
     commands:
-      - echo Build started
-      - #mvn clean install
-      - echo "Build phase ..."
-      - sonar-scanner -Dsonar.login=7a16f9f11e724d5672fd1466d5848f45d3353f3d -Dsonar.host.url=http://13.235.76.152:9000 \ -Dsonar.projectKey=sonar \ -Dsonar.organization=$Organization
-      - sleep 5
-      - curl https://sonarcloud.io/api/qualitygates/project_status?projectKey=$Project >result.json
-      - cat result.json
-      - if [ $(jq -r '.projectStatus.status' result.json) = ERROR ] ; then $CODEBUILD_BUILD_SUCCEEDING -eq 0 ;fi
+      - mvn test
   post_build:
     commands:
-      - echo Build completed
+      - mvn sonar:sonar -Dsonar.login=$SONAR_LOGIN -Dsonar.host.url=$SONAR_HOST
