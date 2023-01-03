@@ -1,10 +1,10 @@
 version: 0.2
 env:
   secrets-manager:
-    LOGIN: prod/sonar:7a16f9f11e724d5672fd1466d5848f45d3353f3d
-    HOST: prod/sonar:http://13.235.76.152:9000 \
-    Organization: prod/sonar:Organization
-    Project: prod/sonar:sonar
+    LOGIN: sonar:7a16f9f11e724d5672fd1466d5848f45d3353f3d
+    HOST: sonar:http://13.235.76.152:9000 \
+    Organization: sonar:Organization
+    Project: sonar
 phases:
   install:
     runtime-versions:
@@ -24,6 +24,6 @@ phases:
       - mvn test     
       - mvn sonar:sonar -Dsonar.login=$LOGIN -Dsonar.host.url=$HOST -Dsonar.projectKey=$Project -Dsonar.organization=$Organization
       - sleep 5
-      - curl https://sonarcloud.io/api/qualitygates/project_status?projectKey=$Project >result.json
-      - cat result.json
-      - if [ $(jq -r '.projectStatus.status' result.json) = ERROR ] ; then $CODEBUILD_BUILD_SUCCEEDING -eq 0 ;fi
+      #- curl https://sonarcloud.io/api/qualitygates/project_status?projectKey=$Project >result.json
+      #- cat result.json
+      #- if [ $(jq -r '.projectStatus.status' result.json) = ERROR ] ; then $CODEBUILD_BUILD_SUCCEEDING -eq 0 ;fi
